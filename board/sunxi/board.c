@@ -226,6 +226,16 @@ int board_init(void)
 	if (ret)
 		return ret;
 
+#if CONFIG_MACH_SUN50I_H616
+	/*
+	 * The bit[16] of register reg[0x03000000] must be zero for the THS
+	 * driver to work properly in the kernel. The BSP u-boot is putting
+	 * the whole register to zero so we are doing the same.
+	 */
+	writel(0x0, SUNXI_SRAMC_BASE);
+	writel(0x0, 0x07010254);
+#endif
+
 	eth_init_board();
 
 	return 0;
