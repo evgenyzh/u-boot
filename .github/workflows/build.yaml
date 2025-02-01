@@ -2,26 +2,44 @@ name: Build U-Boot for Orange Pi Zero 3
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]  # Или ваша рабочая ветка
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Для загрузки артефактов
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive  # Если используются подмодули
 
-    - name: Set up build environment
+    - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc-aarch64-linux-gnu make
+        sudo apt-get install -y \
+          make gcc bison flex libssl-dev swig python3-dev \
+          device-tree-compiler crossbuild-essential-arm64 \
+          gcc-aarch64-linux-gnu
 
-    - name: Build U-Boot for Orange Pi Zero 3
+    - name: Set up cross-compiler
+      run: |
+        echo "CROSS_COMPILE=aarch64-linux-gnu-" >> $GITHUB_ENV
+
+    - name: Configure and build
       run: |
         make orangepi_zero3_defconfig
-        make CROSS_COMPILE=aarch64-linux-gnu-
+        make -j$(nproc)
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: u-boot-binaries
+        path: |
+          u-boot-sunxi-with-spl.bin
+          u-boot.bin
+          u-boot.img
+          u-boot.dtb
