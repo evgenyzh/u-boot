@@ -68,7 +68,13 @@
 	status = "okay";
 };
 
-/* USB 2 & 3 are on headers only. */
+&ehci2 {
+	status = "okay";
+};
+
+&ehci3 {
+	status = "okay";
+};
 
 &emac0 {
 	pinctrl-names = "default";
@@ -92,6 +98,14 @@
 };
 
 &ohci1 {
+	status = "okay";
+};
+
+&ohci2 {
+	status = "okay";
+};
+
+&ohci3 {
 	status = "okay";
 };
 
@@ -126,8 +140,9 @@
 	 * then provided by the GPIOs. Any user of this setup would
 	 * need to adjust the DT accordingly: dr_mode set to "host",
 	 * enabling OHCI0 and EHCI0.
+	 * default: dr_mode = "peripheral";
 	 */
-	dr_mode = "peripheral";
+	dr_mode = "host";
 	status = "okay";
 };
 
