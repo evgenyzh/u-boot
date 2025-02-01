@@ -45,11 +45,9 @@ jobs:
         make -j$(nproc)
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: u-boot-binaries
         path: |
           u-boot-sunxi-with-spl.bin
-          u-boot.bin
-          u-boot.img
-          u-boot.dtb
+        if-no-files-found: error
