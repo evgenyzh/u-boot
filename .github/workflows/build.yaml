@@ -2,34 +2,43 @@ name: Build U-Boot for Orange Pi Zero 3
 
 on:
   push:
-    branches: [ "main" ]  # Или ваша рабочая ветка
-  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Для загрузки артефактов
+      contents: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive  # Если используются подмодули
+        submodules: recursive
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          make gcc bison flex libssl-dev swig python3-dev \
+          make gcc bison flex libssl-dev swig \
+          python3-dev python3-distutils python3-setuptools \
           device-tree-compiler crossbuild-essential-arm64 \
-          gcc-aarch64-linux-gnu
+          gcc-aarch64-linux-gnu \
+          libgnutls28-dev
+        python3 -m pip install --upgrade pip setuptools pylibfdt
+
+    - name: Build ATF (bl31.bin)
+      run: |
+        git clone --depth 1 https://github.com/ARM-software/arm-trusted-firmware.git
+        cd arm-trusted-firmware
+        make CROSS_COMPILE=aarch64-linux-gnu- PLAT=sun50i_h616 DEBUG=1 bl31
+        cp build/sun50i_h616/debug/bl31.bin ../u-boot/
 
     - name: Set up cross-compiler
       run: |
         echo "CROSS_COMPILE=aarch64-linux-gnu-" >> $GITHUB_ENV
 
-    - name: Configure and build
+    - name: Configure and build U-Boot
       run: |
         make orangepi_zero3_defconfig
         make -j$(nproc)
