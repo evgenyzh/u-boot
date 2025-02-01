@@ -3,6 +3,7 @@ name: Build U-Boot for Orange Pi Zero 3
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
