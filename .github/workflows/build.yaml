@@ -33,7 +33,7 @@ jobs:
         git clone --depth 1 https://github.com/ARM-software/arm-trusted-firmware.git
         cd arm-trusted-firmware
         make CROSS_COMPILE=aarch64-linux-gnu- PLAT=sun50i_h616 DEBUG=1 bl31
-        cp build/sun50i_h616/debug/bl31.bin ../u-boot/
+        cp build/sun50i_h616/debug/bl31.bin /home/runner/work/u-boot/u-boot/
 
     - name: Set up cross-compiler
       run: |
