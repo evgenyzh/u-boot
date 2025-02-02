@@ -63,5 +63,5 @@ jobs:
         tag_name: "v${{ github.run_number }}"
         generate_release_notes: true
         files: |
-          u-boot/u-boot-sunxi-with-spl.bin
-          u-boot/arch/arm/dts/sun50i-h618-orangepi-zero3.dtb
+          u-boot-sunxi-with-spl.bin
+          arch/arm/dts/sun50i-h618-orangepi-zero3.dtb
