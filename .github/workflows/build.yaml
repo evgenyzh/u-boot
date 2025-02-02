@@ -3,6 +3,8 @@ name: Build U-Boot for Orange Pi Zero 3
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -10,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+      packages: write
+        
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -51,3 +54,26 @@ jobs:
         path: |
           u-boot-sunxi-with-spl.bin
         if-no-files-found: error
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      if: success()
+      with:
+        name: "U-Boot for Orange Pi Zero3 (${{ steps.get_version.outputs.version }})"
+        tag_name: "v${{ github.run_number }}"
+        generate_release_notes: true
+        files: |
+          u-boot/u-boot-sunxi-with-spl.bin
+          u-boot/arch/arm/dts/sun50i-h618-orangepi-zero3.dtb
+     - name: Download artifacts
+       uses: actions/download-artifact@v4
+       with:
+         name: u-boot-binaries
+         path: artifacts
+
+     - name: Create Release
+       uses: softprops/action-gh-release@v1
+       with:
+         files: |
+            artifacts/u-boot-sunxi-with-spl.bin
+            artifacts/sun50i-h618-orangepi-zero3.dtb
