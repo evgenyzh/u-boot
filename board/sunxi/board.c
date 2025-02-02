@@ -814,7 +814,7 @@ static void setup_environment(const void *fdt)
 
 int misc_init_r(void)
 {
-	const char *spl_dt_name;
+	/*const char *spl_dt_name;*/
 	uint boot;
 
 	env_set("fel_booted", NULL);
@@ -834,7 +834,7 @@ int misc_init_r(void)
 	}
 
 	/* Set fdtfile to match the FIT configuration chosen in SPL. */
-	spl_dt_name = get_spl_dt_name();
+	/*spl_dt_name = get_spl_dt_name();
 	if (spl_dt_name) {
 		char *prefix = IS_ENABLED(CONFIG_ARM64) ? "allwinner/" : "";
 		char str[64];
@@ -842,6 +842,9 @@ int misc_init_r(void)
 		snprintf(str, sizeof(str), "%s%s.dtb", prefix, spl_dt_name);
 		env_set("fdtfile", str);
 	}
+	*/
+	if (env_get("fdtfile") == NULL)
+    env_set("fdtfile", CONFIG_DEFAULT_DEVICE_TREE ".dtb");
 
 	setup_environment(gd->fdt_blob);
 
